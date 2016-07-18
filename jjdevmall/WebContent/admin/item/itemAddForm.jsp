@@ -1,53 +1,61 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
 <style>
-	table, tr, td {
-		border:1px solid #000000;
+	table, td {
+		border : 1px solid ;
 	}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script>
 	$(document).ready(function(){
+		$('#item_name').focus();
 		$('#addBtn').click(function(){
-			if($('#i_name').val()==""){
-				alert("이름을 입력해주세요.");
-				$('#i_name').focus();				
-			}else if($('#i_price').val()==""){
-				alert("비밀번호를 입력해주세요.");
-				$('#i_price').focus();	
-			}else if($('#i_rate').val()==""||!(isNaN($('#i_rate').val()))){
-				alert("할인률을 입력해주세요.");
-				$('#i_rate').focus();	
+			if($('#item_name').val()==""){
+				alert("아이템 이름을 입력해주세요.");
+				$('#item_name').focus();
+			}else if($('#item_price').val()==""||isNaN($('#item_price').val())){
+				alert("가격을 옳바르게 입력해주세요.")
+				$('#item_price').focus();
+			}else if($('#item_rate').val()==""||$('#item_rate').val()>1||isNaN($('#item_rate').val())){
+				alert("옳바른 할인율을 입력해주세요.")
+				$('#item_rate').focus();
 			}else{
-				$('#itemAddForm').submit();
+				$('#addForm').submit();
 			}
 		});
 	});
 </script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
 </head>
-<body>
-<form id="itemName" name="itemName" action="./itemAddAction.jsp" method="post">
-<h1>Member Add</h1>
-<table>	
+<body>	
+<form id="addForm" action="./itemAddAction.jsp" method="post">
+<h1>Item Add</h1>
+<table>
 	<tr>
-		<td>Itemname :</td>
-		<td><input type ="text" id="i_name" name="i_name"></td>
+		<td>이름 : </td>
+		<td>
+			<input type="text" id="item_name" name="item_name">
+		</td>
 	</tr>
 	<tr>
-		<td>Itemprice : </td>
-		<td><input type ="text" id="i_price" name="i_price"></td>
+		<td>가격 : </td>
+		<td>
+			<input type="text" id="item_price" name="item_price">
+		</td>
 	</tr>
 	<tr>
-		<td>Itemrate : </td>
-		<td><input type ="text" id="i_rate" name="i_rate"></td>
+		<td>할인율 : </td>
+		<td>
+			<input type="text" id="item_rate" name="item_rate">
+		</td>
 	</tr>
 	<tr>
-		<td colspan="2"><input type ="button" id="addBtn" value="itemAdd"></td>
-	</tr>
+		<td colspan="2"><input type="button" id="addBtn" value="아이템 추가"></td>
+	</tr>	
 </table>
 </form>
 </body>
