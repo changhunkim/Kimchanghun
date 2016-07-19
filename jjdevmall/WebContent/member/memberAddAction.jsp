@@ -1,6 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*" %>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
+<%@page import="java.sql.*" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,79 +10,69 @@
 <body>
 <%
 	request.setCharacterEncoding("utf-8");
-	String m_id = request.getParameter("m_id");
-	String m_pw = request.getParameter("m_pw");
-	String m_name = request.getParameter("m_name");
-	String m_gender = request.getParameter("m_gender");
-	int m_age = Integer.parseInt(request.getParameter("m_age"));
-	String m_addr = request.getParameter("m_addr");
+	String Id = request.getParameter("memberId");
+	String Pw = request.getParameter("memberPw");
+	String Name = request.getParameter("memberName");
+	String Gender = request.getParameter("memberGender");
+	int Age = Integer.parseInt(request.getParameter("memberAge"));
+	/* int Age =Integer.parseInt(request.getParameter("memberAge"));  */
+	String Add = request.getParameter("memberAddress");
 	
-/* 	System.out.println("m_id : " + m_id);
-	System.out.println("m_pw : " + m_pw);
-	System.out.println("m_name : " + m_name);
-	System.out.println("m_gender : " + m_gender);
-	System.out.println("m_age : " + m_age);
-	System.out.println("m_addr : " + m_addr);
- */
- //jdbc
- 
+	System.out.println(Id+"<--memberId");
+	System.out.println(Pw+"<--memberPw");
+	System.out.println(Name+"<--memberName");
+	System.out.println(Gender+"<--memberGender");
+	System.out.println(Age+"<--memberAge");
+	System.out.println(Add+"<--memberAddress");
+	
  	Connection conn = null;
- 	PreparedStatement pstmt1 = null;
- 	PreparedStatement pstmt2 = null;
- 	ResultSet rs = null;
- 	int result = 0;
+ 	PreparedStatement memstmt = null;
+ 	PreparedStatement Addstmt = null;
  	
- 	String driver = "com.mysql.jdbc.Driver";
- 	String dbUrl = "jdbc:mysql://127.0.0.1:3306/jjdevmall?useUnicode=true&characterEncoding=utf8";
- 	String dbUser = "root";
- 	String dbPw = "java0000";
- 	
- //01
- 
- try{
- 	Class.forName(driver);
- //02	
- 	conn = DriverManager.getConnection(dbUrl, dbUser, dbPw);
- 	conn.setAutoCommit(false);
- //03
- 	String sql="INSERT INTO member(member_id, member_pw, member_name, member_sex, member_age) VALUES (?, ?, ?, ?, ?)";
- 	pstmt1 = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
- 	
- 	pstmt1.setString(1, m_id);
- 	pstmt1.setString(2, m_pw);
- 	pstmt1.setString(3, m_name);
- 	pstmt1.setString(4, m_gender);
- 	pstmt1.setInt(5, m_age);
- 	System.out.println(pstmt1);
- //04 
- 	result = pstmt1.executeUpdate();
- 	
- 	rs = pstmt1.getGeneratedKeys();
- 	
- 	int lastkey = 0;
- 	
- 	System.out.println(lastkey);
- 	if(rs.next()){
- 			lastkey = rs.getInt(1);
- 		}
- 	System.out.println("lastkey : " + lastkey);
- 	System.out.println(lastkey);
- 	if(result == 1){
-
- 		String addrSql = "INSERT INTO address (member_no, member_address) VALUES (?, ?)";
- 		pstmt2 = conn.prepareStatement(addrSql);
- 		
- 		pstmt2.setInt(1, lastkey);
- 		pstmt2.setString(2, m_addr);
- 		
- 		pstmt2.executeUpdate();
- 	}
- 	conn.commit();
+ try{ 
+		String driver = "com.mysql.jdbc.Driver";
+		String url = "jdbc:mysql://127.0.0.1:3306/jjdevmall?useUnicode=true&characterEncoding=utf-8";
+		String dbUser = "root";
+		String dbPw = "java0000";
+		
+		Class.forName(driver);
+	
+		conn = DriverManager.getConnection(url, dbUser, dbPw);
+	
+		conn.setAutoCommit(false);
+		String sql1 = "insert into member( member_id, member_pw,  member_name,  member_gender, member_age) values(?,?,?,?,?)"; 
+		memstmt = conn.prepareStatement(sql1, Statement.RETURN_GENERATED_KEYS);
+		memstmt.setString(1,Id);
+		memstmt.setString(2,Pw);
+		memstmt.setString(3,Name);
+		memstmt.setString(4,Gender);
+		memstmt.setInt(5,Age);
+		memstmt.executeUpdate();
+	
+		ResultSet rs = memstmt.getGeneratedKeys();
+		int lastKey = 0;
+			if(rs.next()){
+				lastKey = rs.getInt(1);
+				
+			}
+			System.out.println(lastKey);
+		String sql2 = "INSERT INTO address(member_no, member_address) VALUES(?,?)";
+		Addstmt = conn.prepareStatement(sql2);
+		Addstmt.setInt(1,lastKey);
+		Addstmt.setString(2,Add);
+		Addstmt.executeUpdate();
+		conn.commit();
+				
  }catch(Exception e){
-	 conn.rollback();
-	 e.printStackTrace();
- }
-
+		 	conn.rollback();
+			e.printStackTrace(); 
+	}finally{
+		// 6. 사용한 Statement 종료
+		if (memstmt != null) try { memstmt.close(); } catch(SQLException ex) {}
+		if (Addstmt != null) try { Addstmt.close(); } catch(SQLException ex) {}
+		// 7. 커넥션 종료
+		if (conn != null) try { conn.close(); } catch(SQLException ex) {}
+	}  
 %>
 </body>
 </html>
